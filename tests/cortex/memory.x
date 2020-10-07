@@ -5,7 +5,12 @@ MEMORY
 }
 
 SECTIONS {
-  linkme_SHENANIGANS : { *(linkme_SHENANIGANS) } > FLASH
-  linkme_EMPTY : { *(linkme_EMPTY) } > FLASH
+#  .linkme __erodata :
+  .linkme :
+  {
+    KEEP(*(SORT(.linkme.*)));
+  } > FLASH
+
+#  __erodata = .;
 }
 INSERT AFTER .rodata

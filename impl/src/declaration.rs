@@ -63,6 +63,10 @@ pub fn expand(input: TokenStream) -> TokenStream {
     let macos_section_start = linker::macos::section_start(&ident);
     let macos_section_stop = linker::macos::section_stop(&ident);
 
+    let none_section = linker::none::section(&ident);
+    let none_section_start = linker::none::section_start(&ident);
+    let none_section_stop = linker::none::section_stop(&ident);
+
     let windows_section_start = linker::windows::section_start(&ident);
     let windows_section_stop = linker::windows::section_stop(&ident);
 
@@ -76,16 +80,24 @@ pub fn expand(input: TokenStream) -> TokenStream {
     TokenStream::from(quote! {
         #(#attrs)*
         #vis static #ident: #linkme_path::DistributedSlice<#ty> = {
-            #[cfg(any(target_os = "none", target_os = "linux", target_os = "macos"))]
+            #[cfg(any(target_os = "linux", target_os = "macos"))]
             extern "C" {
-                #[cfg_attr(any(target_os = "none", target_os = "linux"), link_name = #linux_section_start)]
+                #[cfg_attr(target_os = "linux", link_name = #linux_section_start)]
                 #[cfg_attr(target_os = "macos", link_name = #macos_section_start)]
                 static LINKME_START: <#ty as #linkme_path::private::Slice>::Element;
 
-                #[cfg_attr(any(target_os = "none", target_os = "linux"), link_name = #linux_section_stop)]
+                #[cfg_attr(target_os = "linux", link_name = #linux_section_stop)]
                 #[cfg_attr(target_os = "macos", link_name = #macos_section_stop)]
                 static LINKME_STOP: <#ty as #linkme_path::private::Slice>::Element;
             }
+
+            #[cfg(target_os = "none")]
+            #[link_section = #none_section_start]
+            static LINKME_START: () = ();
+
+            #[cfg(target_os = "none")]
+            #[link_section = #none_section_stop]
+            static LINKME_STOP: () = ();
 
             #[cfg(target_os = "windows")]
             #[link_section = #windows_section_start]
@@ -95,8 +107,13 @@ pub fn expand(input: TokenStream) -> TokenStream {
             #[link_section = #windows_section_stop]
             static LINKME_STOP: () = ();
 
-            #[cfg(any(target_os = "none", target_os = "linux"))]
+            #[cfg(target_os = "linux")]
             #[link_section = #linux_section]
+            #[used]
+            static LINKME_PLEASE: [<#ty as #linkme_path::private::Slice>::Element; 0] = [];
+
+            #[cfg(target_os = "none")]
+            #[link_section = #none_section]
             #[used]
             static LINKME_PLEASE: [<#ty as #linkme_path::private::Slice>::Element; 0] = [];
 

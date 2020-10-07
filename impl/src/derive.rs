@@ -52,6 +52,7 @@ pub fn expand(input: Enum) -> TokenStream {
     let ident_macro = input.linkme_macro;
     let linux_section = linker::linux::section(&ident);
     let macos_section = linker::macos::section(&ident);
+    let none_section = linker::none::section(&ident);
     let windows_section = linker::windows::section(&ident);
 
     TokenStream::from(quote! {
@@ -60,8 +61,9 @@ pub fn expand(input: Enum) -> TokenStream {
         macro_rules! #ident_macro {
             ($item:item) => {
                 #[used]
-                #[cfg_attr(any(target_os = "none", target_os = "linux"), link_section = #linux_section)]
+                #[cfg_attr(target_os = "linux", link_section = #linux_section)]
                 #[cfg_attr(target_os = "macos", link_section = #macos_section)]
+                #[cfg_attr(target_os = "none", link_section = #none_section)]
                 #[cfg_attr(target_os = "windows", link_section = #windows_section)]
                 $item
             };
