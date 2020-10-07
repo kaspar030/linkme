@@ -145,7 +145,7 @@ impl<T> Clone for StaticPtr<T> {
 
 impl<T> DistributedSlice<[T]> {
     #[doc(hidden)]
-    #[cfg(any(target_os = "none", target_os = "linux", target_os = "macos"))]
+    #[cfg(any(target_os = "linux", target_os = "macos"))]
     pub const unsafe fn private_new(start: *const T, stop: *const T) -> Self {
         DistributedSlice {
             start: StaticPtr { ptr: start },
@@ -154,7 +154,7 @@ impl<T> DistributedSlice<[T]> {
     }
 
     #[doc(hidden)]
-    #[cfg(target_os = "windows")]
+    #[cfg(any(target_os = "none", target_os = "windows"))]
     pub const unsafe fn private_new(start: *const (), stop: *const ()) -> Self {
         DistributedSlice {
             start: StaticPtr {

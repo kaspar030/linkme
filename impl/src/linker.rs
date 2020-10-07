@@ -45,3 +45,19 @@ pub mod windows {
         format!(".linkme_{}$c", ident)
     }
 }
+
+pub mod none {
+    use syn::Ident;
+
+    pub fn section(ident: &Ident) -> String {
+        format!(".linkme.linkme_{}$b", ident)
+    }
+
+    pub fn section_start(ident: &Ident) -> String {
+        format!(".linkme.linkme_{}$a", ident)
+    }
+
+    pub fn section_stop(ident: &Ident) -> String {
+        format!(".linkme.linkme_{}_c", ident)
+    }
+}
