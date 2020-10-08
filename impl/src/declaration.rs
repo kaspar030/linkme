@@ -63,7 +63,6 @@ pub fn expand(input: TokenStream) -> TokenStream {
     let macos_section_start = linker::macos::section_start(&ident);
     let macos_section_stop = linker::macos::section_stop(&ident);
 
-    let none_section = linker::none::section(&ident);
     let none_section_start = linker::none::section_start(&ident);
     let none_section_stop = linker::none::section_stop(&ident);
 
@@ -109,11 +108,6 @@ pub fn expand(input: TokenStream) -> TokenStream {
 
             #[cfg(target_os = "linux")]
             #[link_section = #linux_section]
-            #[used]
-            static LINKME_PLEASE: [<#ty as #linkme_path::private::Slice>::Element; 0] = [];
-
-            #[cfg(target_os = "none")]
-            #[link_section = #none_section]
             #[used]
             static LINKME_PLEASE: [<#ty as #linkme_path::private::Slice>::Element; 0] = [];
 
