@@ -5,12 +5,10 @@ MEMORY
 }
 
 SECTIONS {
-#  .linkme __erodata :
   .linkme :
   {
     KEEP(*(SORT(.linkme.*)));
   } > FLASH
-
-#  __erodata = .;
 }
+
 INSERT AFTER .rodata
