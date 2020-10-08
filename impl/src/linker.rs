@@ -50,14 +50,14 @@ pub mod none {
     use syn::Ident;
 
     pub fn section(ident: &Ident) -> String {
-        format!(".linkme.linkme_{}$b", ident)
+        format!(".linkme.{}$b", ident)
     }
 
     pub fn section_start(ident: &Ident) -> String {
-        format!(".linkme.linkme_{}$a", ident)
+        format!(".linkme.{}$a", ident)
     }
 
     pub fn section_stop(ident: &Ident) -> String {
-        format!(".linkme.linkme_{}_c", ident)
+        format!(".linkme.{}$c", ident)
     }
 }
