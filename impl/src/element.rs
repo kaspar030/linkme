@@ -181,7 +181,7 @@ impl Parse for Element {
     }
 }
 
-pub fn expand(path: Path, input: Element) -> TokenStream {
+pub fn expand(path: Path, pos: usize, input: Element) -> TokenStream {
     let mut attrs = input.attrs;
     let vis = input.vis;
     let ident = input.ident;

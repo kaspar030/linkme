@@ -1,9 +1,10 @@
 use syn::parse::{Parse, ParseStream, Result};
-use syn::Path;
+use syn::{LitInt, Path, Token};
 
 pub enum Args {
     None,
     Path(Path),
+    PathAndPos(Path, usize),
 }
 
 impl Parse for Args {
@@ -11,7 +12,15 @@ impl Parse for Args {
         if input.is_empty() {
             Ok(Args::None)
         } else {
-            input.parse().map(Args::Path)
+            let path: Path = input.parse()?;
+            if input.is_empty() {
+                Ok(Args::Path(path))
+            } else {
+                let _: Token![,] = input.parse()?;
+                let pos_lit: LitInt = input.parse()?;
+                let pos_val = pos_lit.base10_parse::<usize>()?;
+                Ok(Args::PathAndPos(path, pos_val))
+            }
         }
     }
 }
