@@ -68,6 +68,7 @@ pub fn expand(input: Enum) -> TokenStream {
                     #![linkme_linux_section = concat!(#linux_section, $key)]
                     #![linkme_macos_section = concat!(#macos_section, $key)]
                     #![linkme_windows_section = concat!(#windows_section, $key)]
+                    #![linkme_none_section = concat!(#none_section, $key)]
                     $item
                 }
             };
@@ -75,20 +76,22 @@ pub fn expand(input: Enum) -> TokenStream {
                 #![linkme_linux_section = $linux_section:expr]
                 #![linkme_macos_section = $macos_section:expr]
                 #![linkme_windows_section = $windows_section:expr]
+                #![linkme_none_section = $none_section:expr]
                 $item:item
             ) => {
                 #[used]
-                #[cfg_attr(any(target_os = "none", target_os = "linux"), link_section = $linux_section)]
+                #[cfg_attr(target_os = "linux", link_section = $linux_section)]
                 #[cfg_attr(target_os = "macos", link_section = $macos_section)]
                 #[cfg_attr(target_os = "windows", link_section = $windows_section)]
+                #[cfg_attr(target_os = "none", link_section = $none_section)]
                 $item
             };
             ($item:item) => {
                 #[used]
                 #[cfg_attr(target_os = "linux", link_section = #linux_section)]
                 #[cfg_attr(target_os = "macos", link_section = #macos_section)]
-                #[cfg_attr(target_os = "none", link_section = #none_section)]
                 #[cfg_attr(target_os = "windows", link_section = #windows_section)]
+                #[cfg_attr(target_os = "none", link_section = #none_section)]
                 $item
             };
         }
